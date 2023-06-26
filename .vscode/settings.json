@@ -1,0 +1,6 @@
+{
+    "python.analysis.typeCheckingMode": "basic",
+    "prettier.enable": false,
+    "python.linting.enabled": false,
+    "python.linting.lintOnSave": false
+}

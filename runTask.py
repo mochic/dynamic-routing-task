@@ -9,6 +9,8 @@ import argparse
 import json
 import os
 import subprocess
+import requests
+import uuid
 
 
 env = 'DynamicRoutingTaskDev'
@@ -24,7 +26,31 @@ paramsDir = os.path.dirname(paramsPath)
 
 with open(paramsPath,'r') as f:
     params = json.load(f)
+
+def get_task_script(output_dir):
+    output_dir = uuid.uuid4().hex
+    p = subprocess.Popen([
+        "git",
+        "clone",
+        "https://github.com/mochic/dynamic-routing-task.git",
+        "&&",
+        "git",
+        "checkout",
+        "production",
+        output_dir,
+    ], shell=True)
+    status_code = p.wait()
     
+    if status_code != 0:
+        raise Exception("Non-zero exit for checkout: %s" % status_code)
+    
+    task_script_path = os.path.join(output_dir, "taskScript.py")
+    if not os.path.exists(task_script_path):
+        raise Exception("Task script not found at expected path: %s" % task_script_path)
+    
+    return task_script_path
+
+
 if 'rigName' not in params:
     import time
     import uuid
